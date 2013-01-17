@@ -6,18 +6,20 @@
 
 from django.template import Context
 from django.template.loader import get_template
-
 from mock import call, patch, Mock
+import unittest
 
-from common import send_html_email
-from tests.npsxtest import NPSXTestCase
+from unchained import format_cents, send_html_email
 
 
 
-class SendHtmlEmailTest(NPSXTestCase):
+class SendHtmlEmailTest(unittest.TestCase):
 
-    @patch('common.EmailMultiAlternatives')
-    def test_renders_to_correct_templates_and_then_delegates(self, mockEmail):
+    @patch('unchained.EmailMultiAlternatives')
+    @patch('unchained.get_template')
+    def test_renders_to_correct_templates_and_then_delegates(
+            self, mock_get_template, mockEmail
+    ):
 
         subject = 'I am subject'
         sender = 'o@no.com'
@@ -41,3 +43,17 @@ class SendHtmlEmailTest(NPSXTestCase):
             [call(subject, email_txt, sender, recipients)]
         )
 
+
+class FormatCentsTest(unittest.TestCase):
+
+    def test_format_cents(self):
+
+        for ii in range(90088, 100099):
+            result = format_cents(ii)
+
+            expected = '{:,.2f}'.format(ii / 100.0)
+            self.assertEqual(expected, result)
+
+
+if __name__ == '__main__':
+    unittest.main()

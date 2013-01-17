@@ -12,7 +12,6 @@ from django.template import Context
 from django.template.loader import get_template
 from django.utils.timezone import utc
 
-USER_LOCALE = 'en_US.utf8'
 
 def send_html_email(subject, template_stub, sender, recipients, context):
     email_txt = get_template(template_stub + '.txt').render(Context(context))
@@ -34,6 +33,6 @@ def wise_datetime_from_date(dt):
 def wise_datetime(**kwargs):
     return datetime(**kwargs).replace(tzinfo=utc)
 
-def format_cents(cents):
-    locale.setlocale(locale.LC_ALL, USER_LOCALE)
+def format_cents(cents, user_locale='en_US.utf8'):
+    locale.setlocale(locale.LC_ALL, user_locale)
     return locale.currency(cents / 100.0, symbol=False, grouping=True)

@@ -15,6 +15,9 @@ from unchained import format_cents, send_html_email, UsernameOrEmailBackend
 
 class SendHtmlEmailTest(unittest.TestCase):
 
+    html_template = 'confirm_email.html'
+    txt_template = 'confirm_email.txt'
+
     @patch('unchained.EmailMultiAlternatives')
     def test_renders_to_correct_templates_and_then_delegates(
             self, mockEmail
@@ -31,8 +34,8 @@ class SendHtmlEmailTest(unittest.TestCase):
             subject, 'confirm_email', sender, recipients, email_context
         )
 
-        email_txt = get_template('confirm_email.txt').render(Context(email_context))
-        email_html = get_template('confirm_email.html').render(Context(email_context))
+        email_txt = get_template(self.txt_template).render(Context(email_context))
+        email_html = get_template(self.html_template).render(Context(email_context))
 
         self.assertEqual(msg.attach_alternative.call_args_list,
             [call(email_html, 'text/html')]

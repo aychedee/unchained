@@ -7,6 +7,7 @@
 from datetime import datetime
 import locale
 
+from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
 from django.template import Context
 from django.template.loader import get_template
@@ -36,3 +37,23 @@ def wise_datetime(**kwargs):
 def format_cents(cents, user_locale='en_US.utf8'):
     locale.setlocale(locale.LC_ALL, user_locale)
     return locale.currency(cents / 100.0, symbol=False, grouping=True)
+
+
+class UsernameOrEmailBackend(object):
+    def authenticate(self, username=None, password=None):
+        if '@' in username:
+            kwargs = {'email': username}
+        else:
+            kwargs = {'username': username}
+        try:
+            user = User.objects.get(**kwargs)
+            if user.check_password(password):
+                return user
+        except User.DoesNotExist:
+            return None
+
+    def get_user(self, user_id):
+        try:
+            return User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return None

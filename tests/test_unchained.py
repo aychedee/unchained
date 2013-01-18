@@ -4,21 +4,20 @@
 # Author: Hansel Dunlop - hansel@interpretthis.org
 #
 
+from django.contrib.auth.models import User
 from django.template import Context
 from django.template.loader import get_template
 from mock import call, patch, Mock
 import unittest
 
-from unchained import format_cents, send_html_email
-
+from unchained import format_cents, send_html_email, UsernameOrEmailBackend
 
 
 class SendHtmlEmailTest(unittest.TestCase):
 
     @patch('unchained.EmailMultiAlternatives')
-    @patch('unchained.get_template')
     def test_renders_to_correct_templates_and_then_delegates(
-            self, mock_get_template, mockEmail
+            self, mockEmail
     ):
 
         subject = 'I am subject'
@@ -55,5 +54,28 @@ class FormatCentsTest(unittest.TestCase):
             self.assertEqual(expected, result)
 
 
-if __name__ == '__main__':
-    unittest.main()
+class AuthenticationBackendTest(unittest.TestCase):
+
+    def test_authenticate_accepts_emails_or_usernames(self):
+        user = User(username='OMG', email='OMG@WHAT.com')
+        user.set_password('secret')
+        user.save()
+
+        backend = UsernameOrEmailBackend()
+
+        self.assertEqual(
+            backend.authenticate(username='OMG', password='secret'),
+            user,
+        )
+        self.assertEqual(
+            backend.authenticate(username='OMG@WHAT.com', password='secret'),
+            user,
+        )
+        self.assertEqual(
+            backend.authenticate(username='ZOMG@WHAT.com', password='secret'),
+            None,
+        )
+        self.assertEqual(
+            backend.authenticate(username='OMG@WHAT.com', password='ssecret'),
+            None,
+        )

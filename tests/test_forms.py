@@ -27,7 +27,6 @@ class RegistrationFormTest(unittest.TestCase):
             form.non_field_errors()
         )
 
-
     def test_clean_raises_if_username_is_already_taken(self):
         User.objects.create(username='double')
         form = RegistrationForm(
@@ -43,7 +42,6 @@ class RegistrationFormTest(unittest.TestCase):
             form.non_field_errors()
         )
 
-
     def test_fields_have_correct_attributes(self):
         form = RegistrationForm()
 
@@ -51,6 +49,3 @@ class RegistrationFormTest(unittest.TestCase):
         self.assertEqual(unicode(form.fields['email'].widget.attrs['placeholder']), 'Email address')
         self.assertEqual(unicode(form.fields['password'].widget.attrs['placeholder']), 'Password')
         self.assertEqual(unicode(form.fields['confirm_password'].widget.attrs['placeholder']), 'Confirm password')
-
-
-

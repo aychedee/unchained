@@ -5,7 +5,7 @@ from distutils.core import setup
 
 setup(
     name='Unchained',
-    version='1.0',
+    version='1.01',
     description='Some helper functions for sharing between Django projects',
     author='Hansel Dunlop',
     author_email='hansel@interpretthis.org',

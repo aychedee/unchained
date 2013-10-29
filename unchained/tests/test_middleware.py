@@ -11,7 +11,6 @@ import unittest
 from unchained.middleware import ReferrerMiddleware
 
 
-
 class RefererMiddlewareTest(unittest.TestCase):
 
     def setUp(self):
@@ -37,3 +36,15 @@ class RefererMiddlewareTest(unittest.TestCase):
 
         rmw.process_request(self.request)
         self.assertEqual('', self.request.session['referrer'])
+
+    def test_process_request_overwrites_empty_string_referrer(self):
+
+        rmw = ReferrerMiddleware()
+
+        self.request.META['HTTP_REFERER'] = ''
+        rmw.process_request(self.request)
+        self.assertEqual('', self.request.session['referrer'])
+
+        self.request.META['HTTP_REFERER'] = 'internal link'
+        rmw.process_request(self.request)
+        self.assertEqual('internal link', self.request.session['referrer'])

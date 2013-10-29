@@ -7,5 +7,5 @@
 class ReferrerMiddleware(object):
 
     def process_request(self, request):
-        if 'referrer' not in request.session:
+        if not request.session.get('referrer', ''):
             request.session['referrer'] = request.META.get('HTTP_REFERER', '')

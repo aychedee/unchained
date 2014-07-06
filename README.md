@@ -6,7 +6,7 @@ Common helper functions to help Django break free
 Install
 =======
 
-    pip install https://github.com/aychedee/unchained.git
+    pip install git+https://github.com/aychedee/unchained.git
 
 
 Usage

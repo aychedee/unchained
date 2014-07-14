@@ -1,7 +1,13 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
 from distutils.core import Command
+from os import path
+
+SITE_ROOT = path.dirname(path.realpath(__file__))
 
 
 class TestCommand(Command):
@@ -15,12 +21,20 @@ class TestCommand(Command):
 
     def run(self):
         from django.conf import settings
-        settings.configure(DATABASES={'default': {'NAME': ':memory:',
-            'ENGINE': 'django.db.backends.sqlite3'}},
+        settings.configure(
+            DATABASES={
+                'default': {
+                    'NAME': ':memory:',
+                    'ENGINE': 'django.db.backends.sqlite3'
+                }
+            },
             INSTALLED_APPS=(
                 'unchained',
                 'django.contrib.auth',
                 'django.contrib.contenttypes'
+            ),
+            TEMPLATE_DIRS=(
+                path.join(SITE_ROOT, 'unchained/tests/templates')
             )
         )
         from django.core.management import call_command
@@ -29,7 +43,7 @@ class TestCommand(Command):
         if django.VERSION[:2] >= (1, 7):
             django.setup()
             django.setup()
-        call_command('syncdb', interactive=False)
+        call_command('syncdb', interactive=False, verbosity=0)
         call_command('test', 'unchained')
 
 

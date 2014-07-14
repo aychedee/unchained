@@ -161,6 +161,7 @@ class JSONField(six.with_metaclass(models.SubfieldBase, models.TextField)):
             return json.dumps(value)
         return value
 
+
 # introspection rules to be compatible with south
 try :
     from south.modelsinspector import add_introspection_rules

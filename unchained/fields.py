@@ -26,12 +26,23 @@ class _JsonMeta(type):
         return type.__call__(JSON.JsonString, pyobj, json_string)
 
 
+def pickle_dict(*args, **kwargs):
+    return JSON.JsonDict(*args, **kwargs)
+
+
+def pickle_list(*args, **kwargs):
+    return JSON.JsonList(*args, **kwargs)
+
+
 class JSON(object):
     __metaclass__ = _JsonMeta
 
+    class Encoder(json.JSONEncoder):
+        def default(self, obj):
+            return obj._data
+
     class InvalidJSON(Exception):
         pass
-
 
     class JsonDict(MutableMapping):
 
@@ -41,6 +52,8 @@ class JSON(object):
             self.json_string = json_string
 
         def __setitem__(self, k, v):
+            if isinstance(v, dict):
+                v = JSON.JsonDict(v, json.dumps(v))
             self._data[k] = v
             self.update_json()
 
@@ -58,11 +71,16 @@ class JSON(object):
             return len(self._data)
 
         def update_json(self):
-            self.json_string = json.dumps(self._data)
+            self.json_string = json.dumps(self, cls=JSON.Encoder)
+
+        def __reduce__(self):
+            return pickle_dict, (self._data, self.json_string)
 
         def __unicode__(self):
-            return unicode(json.dumps(self._data))
+            return unicode('JsonDict(%s)' % (self._data,))
 
+        __str__ = __unicode__
+        __repr__ = __unicode__
 
     class JsonString(str):
 
@@ -74,7 +92,7 @@ class JSON(object):
             return "%s" % (self.json_string,)
 
         __str__ = __unicode__
-
+        __repr__ = __unicode__
 
     class JsonList(MutableSequence):
 
@@ -92,6 +110,9 @@ class JSON(object):
         def __len__(self):
             return len(self._contents)
 
+        def __eq__(self, other):
+            return self._contents == other
+
         def __setitem__(self, i, v):
             self._contents[i] = v
             self.update_json()
@@ -103,8 +124,14 @@ class JSON(object):
         def update_json(self):
             self.json_string = json.dumps(self._contents)
 
+        def __reduce__(self):
+            return pickle_list, (self._contents, self.json_string)
+
         def __unicode__(self):
             return unicode(json.dumps(self._contents))
+
+        __str__ = __unicode__
+        __repr__ = __unicode__
 
 
 class JSONField(six.with_metaclass(models.SubfieldBase, models.TextField)):
@@ -126,9 +153,10 @@ class JSONField(six.with_metaclass(models.SubfieldBase, models.TextField)):
         '''The psycopg adaptor returns Python objects,
             but we also have to handle conversion ourselves
         '''
-        if isinstance(
-            value, JSON.JsonDict) or isinstance(value, JSON.JsonList):
-                return value.json_string
+        if isinstance(value, JSON.JsonDict):
+            return json.dumps(value, cls=JSON.Encoder)
+        if isinstance(value, JSON.JsonList):
+            return value.json_string
         if isinstance(value, JSON.JsonString):
             return json.dumps(value)
         return value

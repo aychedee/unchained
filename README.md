@@ -9,6 +9,12 @@ Install
     pip install git+https://github.com/aychedee/unchained.git
 
 
+Running tests
+=============
+
+    ./setup.py test
+
+
 Usage
 =====
 
@@ -40,4 +46,3 @@ dicts and convert them back to the appropriate type on the way out.
 
     class AModel(models.Model):
         data = JSONField()
-

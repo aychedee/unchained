@@ -3,7 +3,7 @@
 #
 # Author: Hansel Dunlop - hansel@interpretthis.org
 #
-from __future__ import unicode_literals
+
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.http import HttpRequest
 import unittest

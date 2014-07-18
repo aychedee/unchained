@@ -3,7 +3,7 @@
 #
 # Author: Hansel Dunlop - hansel@interpretthis.org
 #
-from __future__ import unicode_literals
+
 from collections import MutableMapping, MutableSequence
 from django.db import models
 from django.utils import six

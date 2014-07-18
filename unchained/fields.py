@@ -3,7 +3,7 @@
 #
 # Author: Hansel Dunlop - hansel@interpretthis.org
 #
-
+from __future__ import unicode_literals
 from collections import MutableMapping, MutableSequence
 from django.db import models
 from django.utils import six
@@ -34,8 +34,7 @@ def pickle_list(*args, **kwargs):
     return JSON.JsonList(*args, **kwargs)
 
 
-class JSON(object):
-    __metaclass__ = _JsonMeta
+class JSON(six.with_metaclass(_JsonMeta)):
 
     class Encoder(json.JSONEncoder):
         def default(self, obj):
@@ -77,7 +76,7 @@ class JSON(object):
             return pickle_dict, (self._data, self.json_string)
 
         def __unicode__(self):
-            return unicode('JsonDict(%s)' % (self._data,))
+            return six.text_type('JsonDict({})'.format(self._data))
 
         __str__ = __unicode__
         __repr__ = __unicode__
@@ -89,7 +88,7 @@ class JSON(object):
             return str.__new__(self, pyobj)
 
         def __unicode__(self):
-            return "%s" % (self.json_string,)
+            return "{}".format(self.json_string)
 
         __str__ = __unicode__
         __repr__ = __unicode__
@@ -128,7 +127,7 @@ class JSON(object):
             return pickle_list, (self._contents, self.json_string)
 
         def __unicode__(self):
-            return unicode(json.dumps(self._contents))
+            return six.text_type(json.dumps(self._contents))
 
         __str__ = __unicode__
         __repr__ = __unicode__

@@ -4,9 +4,15 @@
 # Author: Hansel Dunlop - hansel@interpretthis.org
 #
 
+from __future__ import unicode_literals
+
 import unittest
 
 from django.contrib.auth.models import User
+from django.utils import six
+
+if six.PY3:
+    unicode = str
 
 from unchained.forms import RegistrationForm
 

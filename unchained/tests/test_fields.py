@@ -1,9 +1,15 @@
 # Copyright © 2014 Hansel Dunlop (coding: utf8)
 # All rights reserved
 
+from __future__ import unicode_literals
+
 import pickle
 from collections import MutableMapping
 from unittest import TestCase
+from django.utils import six
+
+if six.PY3:
+    unicode = str
 
 from unchained import fields
 

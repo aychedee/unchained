@@ -138,8 +138,9 @@ class JSONField(six.with_metaclass(models.SubfieldBase, models.TextField)):
     description = 'A JSON database field, returns a string, list or dict type'
 
     def db_type(self, connection):
-        if connection.settings_dict[
-                'ENGINE'] == 'django.db.backends.postgresql_psycopg2':
+        # JSON type only available in PostgreSQL >=9.2
+        if (connection.vendor == 'postgresql' and 
+            connection.pg_version >= 90200) :
             return 'json'
         return 'text'
 

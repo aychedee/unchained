@@ -161,7 +161,8 @@ class JSONFieldTest(TestCase):
     def test_db_type_is_json_for_postgres_database(self):
         jf = fields.JSONField()
         connection = type('', (), {'settings_dict': dict(
-            ENGINE='django.db.backends.postgresql_psycopg2')})
+            ENGINE='django.db.backends.postgresql_psycopg2'),
+            'vendor':'postgresql', 'pg_version':90201})
 
         field_type = jf.db_type(connection)
 
@@ -170,7 +171,7 @@ class JSONFieldTest(TestCase):
     def test_db_type_is_text_for_sqlite_database(self):
         jf = fields.JSONField()
         connection = type('', (), {'settings_dict': dict(
-            ENGINE='django.db.backends.sqlite3')})
+            ENGINE='django.db.backends.sqlite3'),'vendor':'sqlite'})
 
         field_type = jf.db_type(connection)
 

@@ -76,7 +76,7 @@ class JSON(six.with_metaclass(_JsonMeta)):
             return pickle_dict, (self._data, self.json_string)
 
         def __unicode__(self):
-            return six.text_type('JsonDict({})'.format(self._data))
+            return six.text_type(json.dumps(self, cls=JSON.Encoder, indent=4))
 
         __str__ = __unicode__
         __repr__ = __unicode__

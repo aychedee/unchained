@@ -42,7 +42,7 @@ A JSON field type for your models that will accept Python strings, lists, or
 dicts and convert them back to the appropriate type on the way out.
 
     from django.db import models
-    from unchained.fields import import JSONField
+    from unchained.fields import JSONField
 
     class AModel(models.Model):
         data = JSONField()
